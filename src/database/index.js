@@ -28,8 +28,6 @@ const config = {
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-// user
-db.User = require('./user/user')(sequelize, Sequelize);
 
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {

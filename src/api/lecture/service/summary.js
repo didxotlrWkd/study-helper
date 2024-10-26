@@ -7,12 +7,14 @@ module.exports = async function query(data) {
             {
                 method: "POST",
                 headers: {
+                    Authorization: "Bearer zVhEI9bO9-tphETQyGJfrjv8kBq_q2ufHsxo_kkRHBA",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({filename : data})
             }
         );
         const result = await response.json();
+        console.log(result)
         return result;
     }catch(err){
         console.error(err)

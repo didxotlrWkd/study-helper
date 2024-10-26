@@ -22,7 +22,7 @@ const uploadMp3FileToS3 = async (req, res) => {
         const link = await uploadFile(filename, bucketname, file)
         await createLecture({title , link, user_id})
 
-        return res.status(200).json({ file_url : link})
+        return res.status(200).json({title , file_url : link})
     } catch (err) {
         console.error(err)
         res.status(500).json({ error: err.message })
@@ -33,11 +33,16 @@ const retrieveSummarizedLecture = async(req,res) => {
     try{
        const {lecture_id} = req.body 
 
-       const summary = await findSummarizedLecture({lecture_id})
 
-       const response = await axios.get(summary.content_url);
+       const result = await summary("softwarenote.pdf")
+
+    //    const summarizedLecture = await findSummarizedLecture({lecture_id})
+
+    //    const response = await axios.get(summary.content_url);
     
-       res.status(200).json(response.data)
+    //    res.status(200).json(response.data)
+
+    res.send('ok')
         
     }catch(err){
         console.error(err)
@@ -66,9 +71,10 @@ const retrieveQuiz = async(req,res) => {
         const {lecture_id} = req.body
 
         const quizzes = await searchAllQuiz(lecture_id)
-        
+        console.log(quizzes)
         if(quizzes.length == 0) {
-            await quiz({question : "질문 생성해줘"})
+            console.log('as')
+            await quiz(lecture_id)
             const quizzes = await searchAllQuiz(lecture_id)
             return res.status(200).json(quizzes)
         }

@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Quiz.associate = (models) => {
         Quiz.belongsTo(models.Lecture, { foreignKey: 'lecture_id' })
+        Quiz.hasMany(models.Answer,{foreignKey: 'quiz_id'} )
     }
     return Quiz;
 }

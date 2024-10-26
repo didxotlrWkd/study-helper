@@ -1,4 +1,5 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+const {Quiz} = require('../../../database')
 
 module.exports = async function query(data) {
     try {
@@ -14,7 +15,7 @@ module.exports = async function query(data) {
             }
         );
         const result = await response.json();
-        for (const quiz of result) {
+        for (const quiz of result.text) {
             const { 문제유형, 질문, 선택지 } = quiz;
 
             // Prepare options for multiple-choice questions

@@ -1,25 +1,23 @@
 const findUserById = require('../../../database/user/dao/findUserById');
-const generateToken = require('../service.jwt/generateToken');
+const generateToken = require('../service.jwt/generateToken')
 
 module.exports = async (req, res, next) => {
   try {
-    const user_id = req.user_id || req.body.user_id;
+    const user_id = req.user_id || req.body.user_id
 
-    const is_user = await findUserById(user_id);
+    const is_user = await findUserById(user_id)
     if (!is_user) {
-      throw new Error('해당 유저를 찾을 수 없습니다.');
+      throw new Error('해당 유저를 찾을 수 없습니다.')
     }
 
     let access_token = generateToken.access(user_id);
-    
-    // 토큰을 헤더에 담아서 응답
-    res.set('Authorization', `${access_token}`); // Authorization 헤더에 토큰 추가
     return res.status(200).json({
       code: 200,
-      message: '토큰이 발급되었습니다.'
+      message: '토큰이 발급되었습니다.',
+      token: { access_token }
     });
   } catch (error) {
-    console.error(error);
+    console.error(error)
     // 유효시간이 초과된 경우
     if (error.name === 'TokenExpiredError') {
       return res.status(419).json({
@@ -35,6 +33,6 @@ module.exports = async (req, res, next) => {
       });
     }
 
-    res.status(500).json({ error: error.message });
+    res.status(500).json({error : error.message})
   }
 };

@@ -27,9 +27,8 @@ module.exports = (sequelize, DataTypes) => {
                 type : DataTypes.STRING,
             },
 
-            is_solved : {
-                type : DataTypes.BOOLEAN,
-                default: false
+            option5 : {
+                type : DataTypes.STRING,
             }
         },
     )

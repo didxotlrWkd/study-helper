@@ -5,6 +5,10 @@ const findSummarizedLecture = require('../../../database/lecture/dao/summary/fin
 const searchAllQuiz = require('../../../database/quiz/dao/quiz/searchAllQuiz')
 const uploadFile = require('../../../middleware/uploadAudio')
 const axios = require('axios')
+const chatbot = require('../service/chatbot')
+const createChatbotHistory = require('../../../database/chatbot/dao/createChatbotHistory')
+const summary = require('../service/summary')
+const quiz = require('../service/quiz')
 
 
 const uploadMp3FileToS3 = async (req, res) => {
@@ -17,6 +21,7 @@ const uploadMp3FileToS3 = async (req, res) => {
         // // link is the returned object URL from S3
         const link = await uploadFile(filename, bucketname, file)
         await createLecture({title , link, user_id})
+
         return res.status(200).json({ file_url : link})
     } catch (err) {
         console.error(err)
@@ -54,11 +59,19 @@ const retrieveLecture = async(req,res)=>{
     }
 }
 
+
+
 const retrieveQuiz = async(req,res) => {
     try{
         const {lecture_id} = req.body
 
         const quizzes = await searchAllQuiz(lecture_id)
+        
+        if(quizzes.length == 0) {
+            await quiz({question : "질문 생성해줘"})
+            const quizzes = await searchAllQuiz(lecture_id)
+            return res.status(200).json(quizzes)
+        }
 
         return res.status(200).json(quizzes)
     }catch(err){
@@ -82,16 +95,22 @@ const retrieveChatbotHistory = async(req,res) => {
 
 const askChatbot = async(req,res) => {
     try{
-        const {qeustion} = req.body
+        const {question} = req.body
 
-        console.log(qeustion)
+        const ask = {"question" : question}
 
-        return res.status(200).json({answer : "good"})
+        const response = await chatbot(ask)
+
+        await createChatbotHistory({question, response : response.text})
+
+        return res.status(200).json(response.text)
     }catch(err){
         console.error(err)
         res.status(500).json({error : err.message})
     }
 }
+
+
 
 
 module.exports = {

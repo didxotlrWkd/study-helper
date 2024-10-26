@@ -20,31 +20,12 @@ const { sequelize } = require('./src/database');
 const app = express();
 
 // 포트를 설정합니다. 환경변수 PORT가 없으면 9999로 설정합니다.
-app.set('port', process.env.PORT || 9999);
+app.set('port', process.env.PORT || 8888);
 
 // 정적 파일을 제공하는 미들웨어 설정
 app.use(express.static(path.join(__dirname, 'public')))
 
-// 뷰 엔진을 HTML로 설정합니다.
-app.set('view engine', 'html');
 
-// Nunjucks 템플릿 엔진 설정
-nunjucks.configure('./src/views', {
-  autoescape: true, // 자동 이스케이프 활성화
-  express: app, // Express 애플리케이션에 연결
-  watch: true, // 파일 변경 시 자동으로 업데이트
-});
-
-// 세션 미들웨어 설정
-const sessionMiddleware = session({
-  resave: false, // 세션이 수정되지 않더라도 매 요청마다 세션을 저장하지 않음
-  saveUninitialized: false, // 초기화되지 않은 세션을 저장하지 않음
-  secret: process.env.COOKIE_SECRET, // 세션 암호화에 사용할 비밀 키
-  cookie: {
-    httpOnly: true, // 클라이언트 측 스크립트에서 쿠키에 접근할 수 없음
-    secure: false, // HTTPS에서만 쿠키를 전송하지 않음
-  },
-});
 
 // 데이터베이스와 동기화
 sequelize.sync({ force: false }) // force: false는 기존 테이블을 유지
@@ -59,8 +40,6 @@ sequelize.sync({ force: false }) // force: false는 기존 테이블을 유지
 app.use(morgan('dev')); // 개발 모드에서 HTTP 요청 로그 출력
 app.use(express.json()); // JSON 형식의 요청 본문을 파싱
 app.use(express.urlencoded({ extended: false })); // URL 인코딩된 데이터 파싱
-app.use(cookieParser(process.env.COOKIE_SECRET)); // 쿠키 파싱
-app.use(sessionMiddleware); // 세션 미들웨어 사용
 
 // 기본 라우팅
 app.use('/', routes)

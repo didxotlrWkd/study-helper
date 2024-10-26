@@ -28,6 +28,20 @@ const config = {
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
+db.User = require('./user/user')(sequelize, Sequelize);
+
+db.Chatbot = require('./chatbot/chatbot')(sequelize, Sequelize);
+
+db.LearningManagement = require('./learningManagement/learningManagement')(sequelize, Sequelize);
+
+db.Lecture = require('./lecture/entity/lecture')(sequelize, Sequelize);
+db.Recording = require('./lecture/entity/recording')(sequelize, Sequelize);
+db.Summary = require('./lecture/entity/summary')(sequelize, Sequelize);
+
+db.Quiz = require('./quiz/entity/quiz')(sequelize, Sequelize);
+db.Answer = require('./quiz/entity/answer')(sequelize, Sequelize);
+db.UserAnswer = require('./quiz/entity/userAnswer')(sequelize, Sequelize);
+
 
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
